@@ -11,8 +11,11 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "*",
     "@repo/db": "*",
+    "@repo/ui": "*",
+    "@types/bcrypt": "^5.0.2",
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
