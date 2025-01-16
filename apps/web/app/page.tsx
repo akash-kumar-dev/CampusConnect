@@ -1,12 +1,15 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Navbar } from "../components/Navbar/Navbar";
 
 export default function Home() {
   const session = useSession();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div>
+      <Navbar />
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-3xl font-bold underline mb-6">Hello world!</h1>
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
         current session: {JSON.stringify(session)}
@@ -34,6 +37,7 @@ export default function Home() {
                 Signup
               </button>
       </div>
+    </div>
     </div>
   );
 }
