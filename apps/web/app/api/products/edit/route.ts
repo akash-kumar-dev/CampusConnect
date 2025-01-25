@@ -25,7 +25,7 @@ export async function PUT(req: Request) {
       where: { id: productId },
     });
 
-    if (!product || product.userId !== user.id) {
+    if (!product || product.userId !== user.email) {
       return NextResponse.json({ error: "Forbidden: You can only edit your own products" }, { status: 403 });
     }
 
@@ -47,7 +47,7 @@ export async function PUT(req: Request) {
   } catch (error) {
     console.error("Error updating product:", error);
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
+      { error: "Internal Server Error", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

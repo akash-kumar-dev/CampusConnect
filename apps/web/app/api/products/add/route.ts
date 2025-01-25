@@ -14,6 +14,10 @@ export async function POST(req: Request) {
 
     const { user } = session;
 
+    if (!user.email) {
+      return NextResponse.json({ error: "User email not found" }, { status: 400 });
+    }
+
     const body = await req.json();
     const { title, description, price, imageUrl, tags } = body;
 
@@ -29,7 +33,7 @@ export async function POST(req: Request) {
         imageUrl: imageUrl || null,
         tags,
         user: {
-          connect: { email: user.email },
+          connect: { email: user.email as string },
         },
       },
     });
@@ -41,8 +45,9 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error adding product:", error);
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
+      { error: "Internal Server Error", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
+
 }

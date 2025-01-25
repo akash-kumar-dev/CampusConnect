@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
-import { Button } from "@repo/ui";
+import axios, { AxiosError } from "axios";
+
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -28,8 +28,12 @@ export default function Signup() {
       console.log(response.data);
       setSuccess("User created successfully!");
       setFormData({ name: "", email: "", password: "" }); // Reset form
-    } catch (err: any) {
-      setError(err.response?.data?.error || "An unexpected error occurred");
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.error || "An unexpected error occurred");
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
@@ -68,7 +72,8 @@ export default function Signup() {
           placeholder="Enter your password"
         />
       </div>
-      <Button label="Sign Up" onClick={handleSubmit} />
+      {/* <Button label="Sign Up" onClick={handleSubmit} /> */}
+      <button onClick={handleSubmit}>Sign Up</button>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {success && <p style={{ color: "green" }}>{success}</p>}
     </form>

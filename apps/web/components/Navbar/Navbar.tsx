@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./navbar.css";
-
-import { signIn, signOut } from "next-auth/react";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,19 +22,19 @@ export const Navbar = () => {
 
         {/* Large screen menu */}
         <div className="hidden md:flex space-x-6">
-          <a href="/"
+          <Link href="/"
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
             Home
-          </a>
-          <a href="#"
+          </Link>
+          <Link href="#"
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
             About
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
             Contact
-          </a>
+          </Link>
         </div>
 
         {/* Large screen buttons */}
@@ -84,11 +84,11 @@ export const Navbar = () => {
         <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg">
           <ul className="flex flex-col space-y-4 px-4 py-4">
             <li>
-              <a
+              <Link
                 href="/"
                 className="block text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
                 Home
-              </a>
+              </Link>
             </li>
             <li>
               <a

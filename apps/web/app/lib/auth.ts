@@ -1,6 +1,9 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import db from "@repo/db";
 import bcrypt from "bcrypt";
+import { JWT } from "next-auth/jwt";
+import { User } from "next-auth";
+import { Session } from "next-auth";
 
 export const authOptions = {
   providers: [
@@ -40,15 +43,15 @@ export const authOptions = {
   //   error: "/signin",
   // },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT, user?: User }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
+    async session({ session, token }: { session: Session, token: JWT }) {
+      if (token && session.user) {
+        (session.user as any).id = token.id;
       }
       return session;
     },
