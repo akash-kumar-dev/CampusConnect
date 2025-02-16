@@ -25,7 +25,7 @@ export default function Signup() {
     setSuccess(null);
 
     try {
-      const response = await axios.post("/api/auth/signup", formData);
+      await axios.post("/api/auth/signup", formData);
       setSuccess("Account created successfully!");
       setFormData({ name: "", email: "", password: "", college: "" });
       await signIn('credentials', {

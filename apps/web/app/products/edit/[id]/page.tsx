@@ -5,7 +5,7 @@ import { Navbar } from "../../../../components/Navbar/Navbar";
 import { Footer } from "../../../../components/Footer/Footer";
 import { ProductForm } from "../../../../components/Products/ProductForm";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 interface Product {
   id: string;
@@ -17,16 +17,18 @@ interface Product {
   sellingScope: "COLLEGE_ONLY" | "ALL_COLLEGES";
 }
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`);
+        const response = await fetch(`/api/products/${id}`);
         if (!response.ok) throw new Error("Failed to fetch product");
         const data = await response.json();
         setProduct(data);
@@ -37,10 +39,10 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
       }
     };
 
-    if (params.id) {
+    if (id) {
       fetchProduct();
     }
-  }, [params.id]);
+  }, [id]);
 
   if (status === "loading" || loading) {
     return <div>Loading...</div>;

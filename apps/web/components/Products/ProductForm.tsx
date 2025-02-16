@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SellingScope } from "@repo/db/types";
 
 interface ProductFormProps {
   mode: "add" | "edit";
@@ -12,8 +13,18 @@ interface ProductFormProps {
     price: number;
     imageUrl: string | null;
     tags: string[];
-    sellingScope: "COLLEGE_ONLY" | "ALL_COLLEGES";
+    sellingScope: SellingScope;
   };
+}
+
+interface ProductPayload {
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string | null;
+  tags: string[];
+  sellingScope: SellingScope;
+  productId?: string;
 }
 
 export const ProductForm = ({ mode, initialData }: ProductFormProps) => {
@@ -42,14 +53,17 @@ export const ProductForm = ({ mode, initialData }: ProductFormProps) => {
     setLoading(true);
 
     try {
-      const payload = {
-        ...formData,
+      const payload: ProductPayload = {
+        title: formData.title,
+        description: formData.description,
         price: parseFloat(formData.price.toString()),
+        imageUrl: formData.imageUrl || null,
         tags: formData.tags.split(",").map((tag) => tag.trim()),
+        sellingScope: formData.sellingScope as SellingScope,
       };
 
       if (mode === "edit" && initialData?.id) {
-        payload.id = initialData.id;
+        payload.productId = initialData.id;
       }
 
       const response = await fetch(`/api/products/${mode === "add" ? "add" : "edit"}`, {

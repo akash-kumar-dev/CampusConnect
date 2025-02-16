@@ -4,6 +4,15 @@ import bcrypt from "bcrypt";
 import { JWT } from "next-auth/jwt";
 import { User } from "next-auth";
 import { Session } from "next-auth";
+import { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession["user"]
+  }
+}
 
 export const authOptions = {
   providers: [
@@ -50,8 +59,8 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: { session: Session, token: JWT }) {
-      if (token && session.user) {
-        (session.user as any).id = token.id;
+      if (session.user) {
+        session.user.id = token.id as string;
       }
       return session;
     },

@@ -6,13 +6,10 @@ import { NextResponse } from "next/server";
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    // console.log("Session:", session);
 
-    if (!session || !session.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { user } = session;
 
     const body = await req.json();
     const { productId, title, description, price, imageUrl, tags } = body;
@@ -25,8 +22,16 @@ export async function PUT(req: Request) {
       where: { id: productId },
     });
 
-    if (!product || product.userId !== user.email) {
-      return NextResponse.json({ error: "Forbidden: You can only edit your own products" }, { status: 403 });
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Check if the logged-in user owns the product
+    if (product.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Forbidden: You can only edit your own products" },
+        { status: 403 }
+      );
     }
 
     const updatedProduct = await prisma.productListing.update({

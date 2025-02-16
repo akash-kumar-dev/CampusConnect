@@ -6,6 +6,7 @@ import { Footer } from "../../../components/Footer/Footer";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface Product {
   id: string;
@@ -24,7 +25,9 @@ interface Product {
   };
 }
 
-const ProductDetailPage = ({ params }: { params: { id: string } }) => {
+const ProductDetailPage = () => {
+  const params = useParams();
+  const id = params.id as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +36,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`);
+        const response = await fetch(`/api/products/${id}`);
         if (!response.ok) throw new Error("Failed to fetch product");
         const data = await response.json();
         setProduct(data);
@@ -44,8 +47,10 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       }
     };
 
-    fetchProduct();
-  }, [params.id]);
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]);
 
   if (loading) {
     return (

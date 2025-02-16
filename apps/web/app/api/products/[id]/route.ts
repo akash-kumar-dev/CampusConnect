@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
 import prisma from "@repo/db";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
+export async function GET(request: Request) {
+  const id = request.url.split('/').pop();
+  
+  if (!id) {
+    return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+  }
+
   try {
     const product = await prisma.productListing.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: {
           select: {
