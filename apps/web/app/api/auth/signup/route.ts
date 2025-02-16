@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, college } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !college) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
@@ -25,12 +25,12 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
+        college,
       },
     });
 
     return NextResponse.json({ message: 'User created successfully', user });
   } catch (error) {
-    console.error('Signup error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../lib/auth";
 import prisma from "@repo/db";
 import { NextResponse } from "next/server";
+import { SellingScope } from "@repo/db/types";
 
 export async function POST(req: Request) {
   try {
@@ -18,8 +19,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User email not found" }, { status: 400 });
     }
 
+    const userRecord = await prisma.user.findUnique({
+      where: { email: user.email },
+    });
+
+    if (!userRecord) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const body = await req.json();
-    const { title, description, price, imageUrl, tags } = body;
+    const { title, description, price, imageUrl, tags, sellingScope = "COLLEGE_ONLY" } = body;
 
     if (!title || !description || !price || !Array.isArray(tags)) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
@@ -32,8 +41,10 @@ export async function POST(req: Request) {
         price: parseFloat(price),
         imageUrl: imageUrl || null,
         tags,
+        college: userRecord.college,
+        sellingScope: sellingScope as SellingScope,
         user: {
-          connect: { email: user.email as string },
+          connect: { email: user.email },
         },
       },
     });
@@ -49,5 +60,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-
 }

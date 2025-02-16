@@ -1,24 +1,71 @@
 import { useState } from "react";
 import "./navbar.css";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  const AuthButtons = () => {
+    if (session && session.user) {
+      return (
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+              {session.user.name ? getInitials(session.user.name) : '?'}
+            </div>
+            <span className="text-gray-700 dark:text-gray-200">{session.user.name}</span>
+          </div>
+          <button
+            onClick={() => signOut()}
+            className="bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
+          >
+            Sign Out
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <button
+          onClick={() => { window.location.href = '/signup' }}
+          className="bg-indigo-800 text-white px-4 py-2 rounded-lg hover:bg-blue-900"
+        >
+          Sign Up
+        </button>
+        <button
+          onClick={() => { signIn(); }}
+          className="bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
+        >
+          Sign In
+        </button>
+      </>
+    );
   };
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-lg">
       <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <a
-          href="#"
+        <Link
+          href="/"
           className="text-2xl font-bold text-indigo-800 dark:text-white transition-colors duration-300">
           Campus Connect
-        </a>
+        </Link>
 
         {/* Large screen menu */}
         <div className="hidden md:flex space-x-6">
@@ -26,12 +73,11 @@ export const Navbar = () => {
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
             Home
           </Link>
-          <Link href="#"
+          <Link href="/products"
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
-            About
+            Browse
           </Link>
-          <Link
-            href="#"
+          <Link href="/contact"
             className="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
             Contact
           </Link>
@@ -39,14 +85,7 @@ export const Navbar = () => {
 
         {/* Large screen buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          <button onClick={() => { window.location.href = '/signup' }}
-            className="bg-indigo-800 text-white px-4 py-2 rounded-lg hover:bg-blue-900">
-            Sign Up
-          </button>
-          <button onClick={() => { signIn(); }}
-            className="bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white">
-            Sign In
-          </button>
+          <AuthButtons />
         </div>
 
         {/* Toggle button for small screens */}
@@ -91,32 +130,58 @@ export const Navbar = () => {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                href="/products"
                 className="block text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
-                About
-              </a>
+                Browse
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                href="/contact"
                 className="block text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
                 Contact
-              </a>
+              </Link>
             </li>
-            <li>
-              <a onClick={() => { signIn(); }}
-                className="block bg-indigo-800 text-white px-4 py-2 rounded-lg hover:bg-blue-900 text-center">
-                Sign in
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() => { window.location.href = '/signup' }}
-                className="block bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white text-center">
-                  Sign up
-              </a>
-            </li>
+            {session && session.user ? (
+              <>
+                <li className="py-2">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+                      {session.user.name ? getInitials(session.user.name) : '?'}
+                    </div>
+                    <span className="text-gray-700 dark:text-gray-200">{session.user.name}</span>
+                  </div>
+                </li>
+                <li>
+                  <button
+                    onClick={() => signOut()}
+                    className="w-full text-center bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
+                  >
+                    Sign Out
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <button
+                    onClick={() => signIn()}
+                    className="w-full text-center bg-indigo-800 text-white px-4 py-2 rounded-lg hover:bg-blue-900"
+                  >
+                    Sign In
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => { window.location.href = '/signup' }}
+                    className="w-full text-center bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
+                  >
+                    Sign Up
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       )}

@@ -9,6 +9,7 @@ export async function GET() {
           select: {
             name: true,
             email: true,
+            college: true,
           },
         },
       },

@@ -3,8 +3,11 @@
 import { Navbar } from "../components/Navbar/Navbar";
 import Link from "next/link";
 import { Footer } from "../components/Footer/Footer";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -86,22 +89,24 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-indigo-600 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="mb-8 max-w-2xl mx-auto">
-            Join our growing community of students and start exploring items available 
-            in your college community.
-          </p>
-          <Link 
-            href="/signup"
-            className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Sign Up Now
-          </Link>
-        </div>
-      </section>
+      {!session && (
+        <section className="bg-indigo-600 text-white py-20">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to Get Started?
+            </h2>
+            <p className="mb-8 max-w-2xl mx-auto">
+              Join our growing community of students and start exploring items available 
+              in your college community.
+            </p>
+            <Link 
+              href="/signup"
+              className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              Sign Up Now
+            </Link>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>
