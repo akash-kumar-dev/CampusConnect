@@ -23,12 +23,14 @@ export const Navbar = () => {
     if (session && session.user) {
       return (
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+          <Link href="/profile" className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
               {session.user.name ? getInitials(session.user.name) : '?'}
             </div>
-            <span className="text-gray-700 dark:text-gray-200">{session.user.name}</span>
-          </div>
+            <span className="text-gray-700 dark:text-gray-200 hover:text-indigo-800 dark:hover:text-white">
+              {session.user.name}
+            </span>
+          </Link>
           <button
             onClick={() => signOut()}
             className="bg-gray-200 text-indigo-800 px-4 py-2 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"

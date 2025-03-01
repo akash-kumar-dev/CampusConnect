@@ -5,18 +5,21 @@ import { Footer } from "../../../components/Footer/Footer";
 import { ProductForm } from "../../../components/Products/ProductForm";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SellProductPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  useEffect(() => {
+    if (status === "authenticated") return;
+    if (status === "unauthenticated") {
+      router.push("/signup");
+    }
+  }, [status, router]);
+
   if (status === "loading") {
     return <div>Loading...</div>;
-  }
-
-  if (!session) {
-    router.push("/signin");
-    return null;
   }
 
   return (
